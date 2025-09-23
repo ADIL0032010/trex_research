@@ -61,14 +61,23 @@ Arkadaşının GitHub´daki projesi ´´LogIn Ekranı Sistemi´´ olsun. Sen Git
 
 ### Git Add Nedir:
 
-*  Git’te bir değişikliği “staging area”ya eklemek için kullanılan komuttur. Git, dosyalardaki değişiklikleri doğrudan kaydetmez. Önce hangi değişiklikleri commit yapacağını belirtmek gerekir.
+* Git’te bir değişikliği “staging area”ya eklemek için kullanılan komuttur. Git, dosyalardaki değişiklikleri doğrudan kaydetmez. Önce hangi değişiklikleri commit yapacağını belirtmek gerekir.
 
 #### Örneğin:
 Projene ´´notlar.txt´´ adında bir proje ekledin bu dosya üzerine birkaç satır yazı yazdın Git Add komutunu kullanarak Git’e “Bu dosyayı takip et ve sonraki commit’e ekle” demiş oluyorsun.
 
 
+### Git Commit Nedir:
 
+* Git Commit, proje gelişimini adım adım kaydeden,geçmişi kaydeden bir komuttur.
 
+#### Örneğin:
+Bir proje dosyası içinde ´´anasayfa.html´´ dosyasını oluşturdun ve içine bazı bilgilerde ekledin önce Git Add komutu ile bu projeyi takip listesine ekledin, ardından Git Commit komuuutunu kullandığında, bu değişiklik artık Git deposuna kalıcı olarak kaydedilmiş olur 
+
+  
+### Git Push Nedir:
+
+* Git push, kendi bilgisayarında yaptığın Commitleri başkalarının da görebileceği merkezi bir depoya aktarma işlemidir. Genellikle bu merkezi depo GitHub, GitLab veya Bitbucket gibi platformlarda bulunur.
 
 
 
