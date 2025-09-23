@@ -1,4 +1,6 @@
-### 1. Modern Yazılım Geliştirme Pratikleri
+# trex_research
+
+## 1. Modern Yazılım Geliştirme Pratikleri
 
 <details>
 
@@ -8,4 +10,10 @@
 
 </details>
 
+<details>
 
+
+
+
+ 
+</details>
