@@ -107,6 +107,9 @@ Bir kullanıcı e-ticaret projesinde çalışıyor kullanıcı Arama-Fonksiyonu 
 
 </details>
 
+<details>
+
+<summary>Merge conflict nedir, nasıl çözülür?</summary>
 
 
 
@@ -120,7 +123,4 @@ Bir kullanıcı e-ticaret projesinde çalışıyor kullanıcı Arama-Fonksiyonu 
 
 
 
-
-
-
-
+</details>
