@@ -112,6 +112,218 @@ Bir kullanıcı e-ticaret projesinde çalışıyor kullanıcı Arama-Fonksiyonu 
 <summary>Merge conflict nedir, nasıl çözülür?</summary>
 
 
+Merge conflict, Git üzerinde çalışırken iki farklı dalda yapılan değişikliklerin aynı dosya veya aynı satır üzerinde çakışması durumunda ortaya çıkan bir durumdur. Git, hangi değişikliğin geçerli olduğunu otomatik olarak belirleyemediği için kullanıcı müdahalesi gerekir.
+Bu çatışmayı çözmek için öncelikle Git’in işaretlediği çatışan dosyalar belirlenir ve açılarak hangi değişikliğin korunacağına karar verilir. Kullanıcı, gerekli düzenlemeleri yapar ve dosyaları kaydeder. Böylece çatışma giderilmiş olur ve dallar sorunsuz bir şekilde birleştirilebilir.
+Özetle, merge conflict bir “karar gerektiren çakışma”dır ve çözümü, hangi değişikliğin geçerli olacağına manuel olarak karar verip düzenleme yapmaktır.
+
+</details>
+
+<details>
+
+<summary>CI/CD nedir? Azure DevOps, GitHub Actions ile pipeline örnekleri</summary>
+
+
+### CI/CD NEDİR:
+
+
+CI/CD, yazılımın geliştirilmesinden test edilmesine, dağıtılmasına ve izlenmesine kadar tüm süreci otomatikleştirerek hızlı, güvenli ve sürekli güncel bir geliştirme ortamı sağlar. Unit test, otomatik build, deployment ve monitoring gibi kavramlarla birlikte modern yazılım geliştirme süreçlerinin temelini oluşturur.
+
+CI (Continuous Integration – Sürekli Entegrasyon): Geliştiriciler kodlarını sık sık ortak bir depoya gönderir. Her değişiklik otomatik olarak derlenir ve test edilir. Böylece hatalar erken fark edilir, kod tabanı tutarlı kalır ve ekip içinde entegrasyon sorunları minimize edilir.
+
+CD (Continuous Delivery / Continuous Deployment – Sürekli Teslim / Dağıtım): Kodun testlerden geçtikten sonra üretim veya test ortamına otomatik olarak taşınmasıdır. Continuous Delivery’de canlıya geçiş genellikle manuel onay gerektirirken, Continuous Deployment tamamen otomatik olarak kodu canlıya çıkarır.
+
+
+### Azure DevOps Pipeline Örneği
+
+#### Trigger (Tetikleme):
+
+* Geliştirici main veya develop dalına kod gönderir.
+
+* Azure DevOps pipeline otomatik olarak tetiklenir.
+
+#### Build (Derleme):
+
+* Web uygulaması derlenir, gerekli paketler yüklenir.
+
+* Backend servisleri derlenir ve bağımlılıklar kontrol edilir.
+
+* Derleme sırasında oluşan hatalar hemen ekibe bildirilir.
+
+#### Test (Otomatik Testler):
+
+* Unit testler çalıştırılır: Her bir fonksiyon ve modülün beklenen şekilde çalıştığı kontrol edilir.
+
+* Integration testler çalıştırılır: Web uygulaması ile backend servisleri arasında veri akışı ve API çağrıları test edilir.
+
+* Testlerde bir hata bulunursa pipeline durur ve hata detayları ekibe bildirilir.
+
+#### Deploy (Dağıtım):
+
+* Testler başarılı ise uygulama staging ortamına deploy edilir.
+
+* Staging ortamında manuel test veya kullanıcı kabul testleri yapılabilir.
+
+* Gerektiğinde pipeline, production ortamına deploy için onay adımı ekler.
+
+#### Feedback ve Monitoring:
+
+* Pipeline tamamlandığında ekibe bildirim gönderilir (e-posta veya Slack).
+
+* Uygulamanın logları ve performans verileri izlenir.
+
+* Olası hatalar veya performans sorunları bir sonraki geliştirme döngüsüne aktarılır.
+
+Bu sayede ekibin kodu her zaman güncel, hatasız ve güvenli bir ortamda çalışır durumda olur.
+
+
+GitHub Actions Pipeline Örneği
+
+ Pipeline Açıklaması
+
+- **Trigger:** Pipeline, `main` branch’ine yapılan her push veya pull request’te çalışır.  
+- **Ortam:** GitHub, pipeline’ı `ubuntu-latest` üzerinde çalıştırır.  
+- **Adımlar:**  
+  1 . Kod repository’den çekilir.  
+  2. Node.js ortamı kurulur.  
+  3. Bağımlılıklar yüklenir.  
+  4. Testler çalıştırılır.  
+  5. Build işlemi yapılır.
+  
+# GitHub Actions Pipeline Örneği
+
+Bu doküman, basit bir Node.js projesi için GitHub Actions pipeline (workflow) örneğini anlatır.  
+
+
+```yaml
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+```
+
+ Ortak Özellikleri:
+* Her iki pipeline da kodun otomatik olarak test edilmesini ve dağıtılmasını sağlar.
+
+* Hatalar erken tespit edilir, düzeltmek kolaylaşır.
+
+* Kod her zaman güncel, ekip hızlı ve güvenli bir şekilde çalışabilir.
+
+* Build, test ve deploy adımları ardışık veya paralel olarak çalıştırılabilir.
+
+* CI/CD süreçleri sayesinde manuel müdahale minimuma iner, hata olasılığı düşer.
+
+</details>
+
+<details>
+
+<summary>Ek Bilgiler</summary>
+
+Software Development Life Cycle (SDLC)
+
+##### 1. Planlama (Planning):
+
+* Proje amaçlarının belirlenmesi
+
+##### 2. Analiz (Requirement Analysis):
+
+* Kullanıcı ihtiyaçlarının toplanması
+
+##### 3. Tasarım (Design):
+
+* Sistem mimarisi oluşturulur
+
+##### 4. Geliştirme (Implementation / Development):
+
+* Kodlama süreci başlar
+
+##### 5. Test (Testing):
+
+* Yazılım hatalarının bulunması ve düzeltilmesi
+
+##### 6. Dağıtım (Deployment):
+
+* Yazılım canlı ortama aktarılır
+
+##### 7. Bakım (Maintenance):
+
+* Yazılımın güncellenmesi
+
+### SDLC Avantajları
+
+* Geliştirme sürecine düzen getirir.
+
+* Kaynak ve zaman yönetimini kolaylaştırır.
+
+* Hataları erken aşamada yakalamayı sağlar.
+
+* Yazılımın kalitesini artırır.
+
+* Kullanıcı ihtiyaçlarına uygun yazılım geliştirilmesine yardımcı olur.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -124,3 +336,498 @@ Bir kullanıcı e-ticaret projesinde çalışıyor kullanıcı Arama-Fonksiyonu 
 
 
 </details>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
