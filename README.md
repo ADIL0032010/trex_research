@@ -79,24 +79,48 @@ Bir proje dosyası içinde ´´anasayfa.html´´ dosyasını oluşturdun ve içi
 
 * Git push, kendi bilgisayarında yaptığın Commitleri başkalarının da görebileceği merkezi bir depoya aktarma işlemidir. Genellikle bu merkezi depo GitHub, GitLab veya Bitbucket gibi platformlarda bulunur.
 
+#### Örneğin:
+Bilgisayarda Main, Develop, Admin-Panel gibi dallar var hepsini Git İnit deposuna göndermeni ve herkesin görmesini sağlıyor
 
 
+### Git Pull Nedir:
+
+*Başka bir depodaki Git Hub çalışmalarını kendi çalışma alanına çeken bir komuttur.
+
+#### Örneğin:
+Aynı projeyi yapan iki kullanıcı den biri projede bir değişiklik yaptı ve başka bir depoya gönderdi diğer kullanıcının şuan bu projesi güncel değil Git Pull yapıp diğer depodaki güncel kodları kendi kodlarıyla birleştirerek Git Pull yapmış oldu.
 
 
+### Git Branch Nedir:
+
+* Bir projenin ana hattından ayrılarak bağımsız bir geliştirme alanı açmanı sağlar.Böylece yeni özellikler ekleyebilir, hata düzeltebilir veya denemeler yapabilirsin.
+
+#### Örneğin:
+İki kullanıcıdan biri Admin-Panel de diğeri Kullanıcı-Profili dalında çalışıyor ikiside çalışmayı bitirince Main dalında birleştirerek Git Branch yaptılar.
 
 
+### Git Merge Nedir:
+Bir branch de yapılan değişikleri alıp başka branch´le birleştiren komuttur.
 
-
-
-
-
-
-
-
-
-
-
-
-
+#### Örneğin:
+Bir kullanıcı e-ticaret projesinde çalışıyor kullanıcı Arama-Fonksiyonu dalında bir arama özelliği geliştirdi önce kendi dalında tüm testleri yaptı, her şeyin düzgün çalıştığını emin oldu artık bu özelliğin tüm projeye eklenmesi gerekiyor Git Merge ile Arama-Fonksiyonu dalını main ile birleştirdi.: Artık ana dalda kullanıcılar ürün araması yapabilir, kullanıcının geliştirdiğin değişiklikler tüm ekip için kullanılabilir hale gelir.
 
 </details>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
