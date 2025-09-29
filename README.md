@@ -740,9 +740,9 @@ Facebook tarafından geliştirilen bir API sorgulama dilidir. İstemciye sadece 
 ## 4. ASP.NET
 
 <details>
-<ssummary>ASP.NET ve ASP.NET Core nedir? Avantajları, Farkları</ssummary>
+<summary>ASP.NET ve ASP.NET Core nedir? Avantajları, Farkları</summary>
 
-
+> ASP.NET Nedir:
 
 
 
