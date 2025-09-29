@@ -518,7 +518,7 @@ C# dilinde => ifadesi, yani lambda operatörü, hem lambda ifadeleri hem de expr
 * ConfigureAwait → İşlem sonrası hangi bağlamda (UI thread, başka thread) devam edileceğini belirler.
 </details>
 
-## 3. Backend Geliştirme Temelleri</summary>
+## 3. Backend Geliştirme Temelleri
 <details>
 <summary>Backend nedir? Frontend ile farkları Nelerdir?</summary>
   
@@ -609,12 +609,139 @@ Frontend, kullanıcıya görünen ve etkileşim sağlanan kısmı; backend ise a
 * Sunucudan veri istemek için kullanılır.
 
 * Veri üzerinde değişiklik yapmaz, sadece bilgi alır.
-
+#### Örnek:
+* Tarayıcıda bir web sitesine girmek → sunucudan HTML sayfası almak.
 
 ```yml
 GET https://api.example.com/kullanicilar
 
 ```
+
+#### Post:
+* Sunucuya yeni veri eklemek için kullanılır.
+
+* Genellikle form gönderimlerinde veya veri oluştururken kullanılır.
+#### Örnek:
+
+* Yeni kullanıcı eklemek:
+```nginx
+POST https://api.example.com/kullanicilar
+Body: { "isim": "Ahmet", "yas": 25 }
+```
+
+#### Put:
+* Sunucudaki var olan veriyi güncellemek için kullanılır.
+
+* Genellikle tüm veri kaydı değiştirilir.
+#### Örnek:
+* Kullanıcının adını güncellemek:
+
+```yml
+PUT https://api.example.com/kullanicilar/1
+Body: { "isim": "Ahmet", "yas": 25 }
+```
+
+#### Delete:
+* Sunucudaki bir veriyi silmek için kullanılır.
+#### Örnek:
+* Kullanıcıyı silmek:
+```yml
+DELETE https://api.example.com/kullanicilar/1
+```
+</details>
+ 
+<details>
+
+<summary>RESTful servislerin çalışma mantığı</summary>
+
+* RESTful servislerin çalışma mantığı, kaynaklara (örneğin kullanıcı veya ürün) URL üzerinden ulaşmak ve bu kaynaklar üzerinde işlem yapmak için HTTP metodlarını kullanmaya dayanır.Her istek bağımsızdır (stateless), yani sunucu önceki isteği hatırlamaz. Veriler genellikle JSON formatında gidip gelir. Böylece sistem hem basit hem de farklı uygulamalar tarafından kolayca kullanılabilir.
+
+</details>
+<details>
+
+<summary>JSON veri formatı, kullanım amacı ve JSON veri örneği açıklaması </summary>
+
+> JSON Veri Formatı 
+
+JSON, verileri anahtar–değer (key–value) çiftleri halinde saklayan hafif bir veri formatıdır. Veriler süslü parantez { } içinde tutulur, anahtarlar her zaman çift tırnak " " içinde yazılır. Değerler ise sayı, metin, true/false, null, liste veya başka bir nesne olabilir.
+
+> JSON Kullanım Amacı
+
+* Sunucu ile istemci arasında veri alışverişi yapmak (API’lerde veri transferi).
+
+* Yapılandırılmış bilgileri dosya halinde saklamak (konfigürasyon, ayarlar).
+
+* Farklı platformlar ve programlama dilleri arasında uyum sağlamak.
+
+* İnsanlar tarafından okunabilir ve bilgisayarlar tarafından kolay işlenebilir olmak.
+
+* Hafif yapısı sayesinde ağ üzerinden hızlı veri taşımak ve performansı artırmak.
+
+* Gerçek zamanlı uygulamalarda veri iletimini kolaylaştırmak (chat uygulamaları, canlı bildirimler).
+
+* Verilerin organize ve hiyerarşik şekilde saklanmasını sağlamak.
+
+* Web servisleri ve mobil uygulamalar arasında standart bir veri formatı oluşturmak.
+
+* Büyük veri ve bulut uygulamalarında veri paylaşımını basitleştirmek.
+
+> JSON Veri Örneği 
+
+```yml
+{
+  "id": 003,
+  "name": "Adil",
+  "email": "adill@example.com",
+  "age": 91,
+  "isActive": true,
+  "roles": ["user", "admin"],
+  "address": {
+    "street": "  Yenibosna 85",
+    "city": "İstanbul",
+    "zip": "34000"
+  }
+}
+```
+</details>
+
+
+<details>
+
+<summary>SOAP ve GraphQL Nedir, REST’ten Farkları Temel Karşılaştırması</summary>
+
+> SOAP ve GraphQL Nedir?
+SOAP (Simple Object Access Protocol):
+XML tabanlı bir web servis protokolüdür. Katı standartları vardır ve özellikle kurumsal, finansal veya güvenlik gerektiren sistemlerde kullanılır. Mesajlar XML ile paketlenir ve HTTP, SMTP gibi protokoller üzerinden iletilir.
+
+GraphQL:
+Facebook tarafından geliştirilen bir API sorgulama dilidir. İstemciye sadece ihtiyaç duyduğu veriyi aldırır ve tek bir endpoint üzerinden birden fazla kaynağa erişim sağlar. REST’in “çok endpoint ve fazla veri alma” sorununu çözer.
+
+> REST İle Farkları (Tablo)
+
+| Özellik             | REST                          | SOAP                                  | GraphQL                                   |
+| ------------------- | ----------------------------- | ------------------------------------- | ----------------------------------------- |
+| **Veri Formatı**    | JSON, XML (çoğunlukla JSON)   | XML                                   | JSON                                      |
+| **Endpoint Yapısı** | Her kaynak için ayrı endpoint | Tek veya birden fazla                 | Genellikle tek endpoint                   |
+| **Esneklik**        | Orta; sabit veri              | Düşük; katı standartlar               | Yüksek; istemci ihtiyacına göre veri alır |
+| **Güvenlik**        | HTTPS                         | WS-Security gibi gelişmiş protokoller | HTTPS veya token tabanlı                  |
+| **Kullanım Alanı**  | Web ve mobil uygulamalar      | Kurumsal, finans, büyük sistemler     | Modern API’ler, esnek veri sorgulamaları  |
+| **Veri Alma Şekli** | Sabit endpoint veri yapısı    | Katı mesaj yapısı                     | Sorgu ile sadece gerekli veri çekilir     |
+| **Veri Güncelleme** | GET, POST, PUT, PATCH, DELETE | Operasyonlar (RPC tarzı)              | Mutation ile yapılır                      |
+
+> REST vs SOAP vs GraphQL temel karşılaştırması
+
+* REST basitliğiyle öne çıkar ama bazen gereksiz veri döndürür.
+
+* SOAP güvenlik ve standart bakımından güçlüdür fakat ağırdır.
+
+* GraphQL esneklik sağlar, istemci tam olarak ihtiyacı kadar veri alır ama öğrenmesi REST’e göre daha zordur.
+</details>
+
+## 4. ASP.NET
+
+<details>
+<ssummary>ASP.NET ve ASP.NET Core nedir? Avantajları, Farkları</ssummary>
+
 
 
 
@@ -625,39 +752,6 @@ GET https://api.example.com/kullanicilar
 
 
 </details>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
