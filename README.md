@@ -744,6 +744,67 @@ Facebook tarafından geliştirilen bir API sorgulama dilidir. İstemciye sadece 
 
 > ASP.NET Nedir:
 
+ASP.NET, Microsoft’un geliştirdiği bir web geliştirme platformudur. Amacı, yalnızca statik sayfalar yerine, dinamik, kullanıcıyla etkileşimli ve veritabanı bağlantılı web siteleri oluşturmayı sağlamaktır.
+Bu teknoloji .NET çatısı altında çalışır, yani genellikle C# diliyle kodlanır. Kullanıcı bir sayfa istediğinde ASP.NET, sunucu tarafında kodu çalıştırır, veritabanıyla iletişim kurar, gerekli hesaplamaları yapar ve tarayıcıya son haliyle HTML, CSS, JavaScript gönderir. Böylece kullanıcı, kişiye özel ve dinamik içerik görmüş olur.
+
+> ASP.NET Core Nedir:
+
+ASP.NET Core, Microsoft’un geliştirdiği, ASP.NET’in modern ve gelişmiş sürümüdür. Klasik ASP.NET yalnızca Windows üzerinde çalışırken, ASP.NET Core Windows, Linux ve macOS’ta çalışabilir. Ayrıca daha hafif, hızlı ve esnek olacak şekilde tasarlanmıştır.
+Bu teknoloji ile hem dinamik web siteleri hem de API servisleri geliştirilebilir. Modüler yapısı sayesinde sadece ihtiyaç duyulan bileşenler projeye eklenir, bu da performansı artırır. Genellikle C# dili ile kullanılır ve bulut tabanlı uygulamalar için de oldukça uygundur.
+Kısacası: ASP.NET Core, günümüzde web uygulamaları geliştirmek için kullanılan, platform bağımsız, açık kaynaklı ve yüksek performanslı Microsoft teknolojisidir.
+
+> Avantajları:
+* Platform her işletim sisteminde kullanabilir Win, MacOS, Linux
+
+* Yüksek performanslıdır daha az yer kaplayan  ve hızlı bir yapıya sahiptir.
+
+* Modülerdir sadece ihtiyaç duyulan bileşenler eklenir, gereksiz yük yoktur.
+
+* Bulut uyumludur özellikle Azure gibi bulut servisleriyle sorunsuz çalışır.
+
+* Güvenlidir kimlik doğrulama, yetkilendirme ve veri koruma için güçlü araçlar sunar.
+
+* Modern geliştirme desteği vardır RESTful API, gRPC, SignalR gibi teknolojilerle uyumludur.
+
+* Açık kaynaklıdır Topluluk katkısı vardır ve sürekli gelişmektedir.
+
+* Sürekli güncellenir Microsoft tarafından aktif olarak desteklenir.
+> Farkları:
+* ASP.NET yalnızca Windows üzerinde çalışır, ASP.NET Core ise Windows, Linux ve macOS üzerinde çalışabilir.
+
+* ASP.NET kapalı kaynaklıdır, ASP.NET Core açık kaynaklıdır.
+
+* ASP.NET daha ağır bir yapıya sahiptir, ASP.NET Core daha hafif ve yüksek performanslıdır.
+
+* ASP.NET’te yapı monolitiktir, ASP.NET Core ise modülerdir; sadece gerekli bileşenler eklenebilir.
+
+* ASP.NET bulut için optimize edilmemiştir, ASP.NET Core bulut tabanlı uygulamalara uygundur.
+
+* ASP.NET eski Web Forms ve MVC modellerine dayanır, ASP.NET Core modern yaklaşımları (MVC, Razor Pages, minimal API vb.) destekler.
+
+* ASP.NET geliştirmesi büyük ölçüde durmuş durumdadır, ASP.NET Core ise aktif olarak güncellenmeye devam etmektedir.
+</details>
+
+<details>
+
+<summary>MVC nedir, ne için kullanılır?</summary>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -752,35 +813,6 @@ Facebook tarafından geliştirilen bir API sorgulama dilidir. İstemciye sadece 
 
 
 </details>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
