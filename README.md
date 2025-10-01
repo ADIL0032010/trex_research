@@ -710,6 +710,7 @@ JSON, verileri anahtar–değer (key–value) çiftleri halinde saklayan hafif b
 <summary>SOAP ve GraphQL Nedir, REST’ten Farkları Temel Karşılaştırması</summary>
 
 > SOAP ve GraphQL Nedir?
+
 SOAP (Simple Object Access Protocol):
 XML tabanlı bir web servis protokolüdür. Katı standartları vardır ve özellikle kurumsal, finansal veya güvenlik gerektiren sistemlerde kullanılır. Mesajlar XML ile paketlenir ve HTTP, SMTP gibi protokoller üzerinden iletilir.
 
@@ -789,6 +790,200 @@ Kısacası: ASP.NET Core, günümüzde web uygulamaları geliştirmek için kull
 
 <summary>MVC nedir, ne için kullanılır?</summary>
 
+> MVC Nedir:
+
+MVC, Yazılım Mühendisliği’nde önemli bir yere sahip architectural patterns (yazılım mimari desenleri)’ın bir parçasıdır. Model, View ve Controller kelimelerinin baş harflerinden oluşan MVC (Model-View-Controller), 1979 yılında Tygve Reeskaug tarafından oluşturulmuş ve yazılım gelişmede bir çok projede kullanılmıştır. Son dönemlerde Microsoft’un MVC desenini Asp.Net teknolojisi ile birleştirmesi ile popülaritesi daha da artmıştır.
+
+> MVC Ne İçin Kullanılır
+
+MVC projeleri daha düzenli, esnek ve yönetilebilir yapmak için kullanılır. 
+
+* Kod düzeni sağlar uygulamayı 3 katmana ayırır (Model, View, Controller).
+
+* Bakımı kolaylaştırır görünüm, iş mantığı ve veri birbirinden bağımsızdır.
+
+* Takım çalışmasını kolaylaştırır frontend ve backend geliştiriciler ayrı katmanlarda çalışabilir.
+
+* Yeniden kullanılabilirlik sağlar aynı Model veya iş mantığı başka projelerde de kullanılabilir.
+
+* Test edilebilirliği artırır katmanlar ayrı olduğu için daha kolay test yapılır.
+
+* Sürdürülebilirlik sağlar büyük ve uzun vadeli projelerde düzeni korur.
+ 
+ </details>
+ 
+<details>
+ 
+<summary>Middleware nedir, nasıl çalışır?</summary>
+
+> Middleware Nedir:
+
+Middleware, yazılım dünyasında özellikle web uygulamaları ve frameworkler (ör. ASP.NET, Django, Express.js) içinde sıkça kullanılan bir kavramdır.
+
+#### Örneğin:
+```yml
+// Basit bir middleware
+function logger(req, res, next) {
+  console.log(`İstek: ${req.method} ${req.url}`);
+  next(); // bir sonraki middleware'e veya route'a geç
+}
+
+app.use(logger);
+```
+
+> Middleware Nasıl Çalışır:
+
+* Kullanıcı istek gönderir bir URL çağrılır.
+
+* İstek sunucuya ulaşmadan önce middleware zincirine girer.
+
+* Her middleware:
+
+  * Gelen isteği inceleyebilir.
+
+  * İsteği değiştirebilir.
+
+  * Yanıtı durdurabilir.
+
+  * Veya bir sonrakine iletebilir (next() fonksiyonu ile).
+
+* Sonunda istek asıl hedefe (controller/route) ulaşır.
+
+* Yanıt oluşturulduktan sonra middleware zincirinden geri dönebilir.
+
+#### Örneğin:
+```yml
+// 1. Middleware
+function logger(req, res, next) {
+  console.log("İstek alındı:", req.method, req.url);
+  next(); // devam et
+}
+
+// 2. Middleware
+function auth(req, res, next) {
+  if (!req.headers.authorization) {
+    return res.status(401).send("Yetkisiz!");
+  }
+  next(); // devam et
+}
+
+app.use(logger);
+app.use(auth);
+
+app.get("/", (req, res) => {
+  res.send("Hoş geldin!");
+});
+
+
+  ```
+
+> Startup.cs, Program.cs içindeki middleware sıralamasının açıklaması
+
+ASP.NET Core’da middleware sıralaması, uygulamaya gelen isteğin hangi sırada işleneceğini belirler. İstek önce tanımlanan ilk middleware’den geçer ve sırasıyla diğerlerine aktarılır. Yanıt da ters yönde geri döner. Bu yüzden sıralama çok önemlidir.
+Örneğin UseExceptionHandler en başta olmalıdır çünkü daha sonra çalışan herhangi bir middleware hata üretirse bu hatayı yakalayabilsin. UseHttpsRedirection erken çalışır çünkü gelen tüm isteklerin güvenli bağlantıya yönlendirilmesi gerekir. UseStaticFiles, routing’den önce çalışır çünkü aksi takdirde CSS, JS gibi dosyalar route gibi algılanabilir. UseRouting ile istek hangi controller ve action’a gidecekse belirlenir. Daha sonra UseAuthentication devreye girerek kullanıcının kimliği doğrulanır. Ardından UseAuthorization çalışarak doğrulanmış kullanıcının yetkili olup olmadığı kontrol edilir. En sonda ise UseEndpoints veya MapControllerRoute bulunur; bu da isteği gerçek endpoint’e yönlendirir ve yanıt üretir.
+
+> Middleware sıralaması:
+
+ ```yml
+
+Request  → Middleware1 → Middleware2 → Middleware3 → Endpoint
+Response ← Middleware1 ← Middleware2 ← Middleware3 ← Endpoint
+ ```
+</details>
+
+<details>
+
+<summary>Dependency Injection (DI) nedir, neden önemlidir?</summary>
+
+> Dependency Injection DI Nedir:
+
+Dependency Injection DI, yazılım geliştirmede bir sınıfın ihtiyaç duyduğu başka nesneleri veya hizmetleri kendisi yaratmak veya yönetmek yerine, bu bağımlılıkların dışarıdan sağlanması prensibine dayanan bir tasarım yöntemidir.
+
+
+> Dependency Injection Neden Önemlidir:
+
+Yazılım geliştirmede sınıfların birbirine sıkı sıkıya bağlı olması işleri zorlaştırır. DI sayesinde bu bağımlılıklar gevşetilir ve kod daha esnek hale gelir.
+
+Önemli olmasının sebepleri:
+
+Sınıflar birbirine bağımlı olmaz, daha kolay değiştirilip genişletilebilir.
+
+Test edilebilirliği artırır gerçek nesne yerine sahte/mock nesneler kullanılabilir, birim testler kolaylaşır.
+
+Bakımı kolaylaştırır bir bağımlılık değişirse diğer sınıflara dokunmadan güncelleme yapılabilir.
+
+Yeniden kullanılabilirlik sağlar aynı sınıf farklı senaryolarda farklı bağımlılıklarla çalışabilir.
+
+Sürdürülebilirlik sağlar büyük projelerde karmaşıklığı azaltır ve ekiplerin daha verimli çalışmasına yardımcı olur.
+
+> Dependency Injection DI Kullanımı Örneneği:
+ ```yml
+// 1. Önce bir arayüz tanımlıyoruz
+public interface INotificationService
+{
+    void Send(string message);
+}
+
+// 2. Email servisi
+public class EmailNotification : INotificationService
+{
+    public void Send(string message)
+    {
+        Console.WriteLine("Email gönderildi: " + message);
+    }
+}
+
+// 3. SMS servisi
+public class SmsNotification : INotificationService
+{
+    public void Send(string message)
+    {
+        Console.WriteLine("SMS gönderildi: " + message);
+    }
+}
+
+// 4. Bildirim yöneticisi (Dependency Injection burada devreye giriyor)
+public class NotificationManager
+{
+    private readonly INotificationService _notificationService;
+
+    // Bağımlılık dışarıdan enjekte ediliyor
+    public NotificationManager(INotificationService notificationService)
+    {
+        _notificationService = notificationService;
+    }
+
+    public void Notify(string message)
+    {
+        _notificationService.Send(message);
+    }
+}
+
+// 5. Kullanım
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Email servisini kullanmak istersek:
+        var emailManager = new NotificationManager(new EmailNotification());
+        emailManager.Notify("Hoş geldiniz!");
+
+        // SMS servisini kullanmak istersek:
+        var smsManager = new NotificationManager(new SmsNotification());
+        smsManager.Notify("Şifreniz: 1234");
+    }
+}
+
+```
+</details>
+
+<details>
+<summary>Katmanlı Mimari (Layered Architecture)</summary>
+
+
+
+
+
 
 
 
@@ -813,85 +1008,6 @@ Kısacası: ASP.NET Core, günümüzde web uygulamaları geliştirmek için kull
 
 
 </details>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
