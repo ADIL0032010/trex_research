@@ -1,5 +1,8 @@
 # trex_research
 
+  *Yazılım Temel Kavramları*
+
+
 ## 1. Modern Yazılım Geliştirme Pratikleri
 
 <details>
@@ -980,43 +983,114 @@ class Program
 <details>
 <summary>Katmanlı Mimari (Layered Architecture)</summary>
 
+> Presentation, Business, Data Access katmanları:
+
+#### Presentation Layer (Sunum Katmanı)
+
+  * Kullanıcıyla etkileşim kurmak
+    
+  * Kullanıcıdan veri alır ekrana çıktı verir.
+
+  * İş kurallarını içermez sadece görselleştirme ve yönlendirme yapar.
+
+#### Business Layer (İş Katmanı)
+
+  * Uygulamanın iş mantığını bulundurması
+   
+  * İş kuralları ve algoritmalar burada uygulanır.
+
+  * Sunum katmanından gelen talepleri işler.
+
+  * Veri erişim katmanıyla iletişim kurar ama veritabanına doğrudan bağlanmaz.
+    
+#### Data Access Layer (Veri Erişim Katmanı)
+
+  * Veritabanı ile uygulama arasında iletişim kurmak
+
+  * Veritabanı sorgularını SQL, ORM, Repository içerir.
+
+  * CRUD (Create, Read, Update, Delete) işlemlerini yapar.
+
+  * Business Layer’a sadece işlenmiş veri nesneleri döner.
+
+#### Repository Pattern:
+
+ * Veritabanına erişimi soyutlar.
+
+ * CRUD ekle, oku, güncelle, sil işlemlerini yapar.
+
+ * İş katmanı veritabanı detaylarını bilmez sadece repository’den veri ister.
 
 
+#### Service Pattern:
 
+ * İş kurallarını içerir.
 
+ * Doğrulama, hesaplama, kurallar burada uygulanır.
 
+ * Sunum katmanı sadece service ile konuşur, repository ile doğrudan iletişime geçmez.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   
+![1_vNZs7q1OgPc2yDaiGJpCwg](https://miro.medium.com/v2/resize:fit:786/format:webp/1*yRlhn__kn1enuvb6rja0gw.png)
 </details>
 
+<details>
+
+<summary>Clean Architecture</summary>
+
+> Domain, Application, Infrastructure, API katmanları:
 
 
+#### Domain Layer (Alan Katmanı)
+
+* Temel iş kurallarını ve mantığını içerir.
+
+* Entity ve Value Object’ler burada bulunur.
+
+* Domain servisleri iş akışlarını yönetir.
+
+#### Application Layer (Uygulama Katmanı)
+
+* İş kurallarını kullanarak uygulama mantığını yönetir.
+
+* Use-case ve servisler burada yer alır.
+
+* Domain katmanına bağımlıdır, iş akışını koordine eder.
+
+#### Infrastructure Layer (Alt Yapı Katmanı)
+
+* İş kurallarını kullanarak uygulama mantığını yönetir.
+
+* Use-case ve servisler burada yer alır.
+
+* Domain katmanına bağımlıdır, iş akışını koordine eder.
+
+#### API Layer (Arayüz Katmanı)
+
+* Kullanıcı ve diğer sistemlerle iletişim sağlar.
+
+* Gelen istekleri Application katmanına yönlendirir.
+
+* Yanıtları kullanıcıya veya dış sistemlere döndürür.
+
+> Bağımlılıkların dışa akması ilkesi:
+
+İç katmanlar (Domain, Application) dış katmanlara bağımlı olamaz.
+Yani iş kuralları (Domain) veritabanını, API’yi veya dış servisleri bilmemelidir.
+Tam tersi, dış katmanlar iç katmanlara bağımlıdır.
 
 
+![1_vNZs7q1OgPc2yDaiGJpCwg](https://i.sstatic.net/DJm5T.png)
+  
+</details>
+
+##  5. Veritabanı ve ORM
 
 
+> SQL nedir?
 
-
+SQL (Structured Query Language), ilişkisel veritabanlarını yönetmek için kullanılan standart bir sorgu dilidir.
+Verilerin tanımlanması, saklanması ve düzenlenmesi için geliştirilmiş olup, günümüzde birçok veritabanı sisteminde temel iletişim dili olarak kullanılır.
 
 
 
