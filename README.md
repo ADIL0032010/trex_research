@@ -1086,11 +1086,246 @@ Tam tersi, dış katmanlar iç katmanlara bağımlıdır.
 
 ##  5. Veritabanı ve ORM
 
-
-> SQL nedir?
+<details>
+ <summary> SQL Nedir? </summary>
 
 SQL (Structured Query Language), ilişkisel veritabanlarını yönetmek için kullanılan standart bir sorgu dilidir.
 Verilerin tanımlanması, saklanması ve düzenlenmesi için geliştirilmiş olup, günümüzde birçok veritabanı sisteminde temel iletişim dili olarak kullanılır.
+</details>
+
+<details>
+
+<summary>İlişkisel ve ilişkisel olmayan veri tabanları arasındaki farklar</summary>
+
+##### 1.Genel Tanım
+
+* İlişkisel veritabanları (RDBMS), verileri tablolar halinde saklar. Her tablo satır ve sütunlardan oluşur ve tablolar birbirine ilişkiler (örneğin “foreign key”) aracılığıyla bağlanır.
+
+* İlişkisel olmayan veritabanları (NoSQL), verileri tablo yerine daha esnek yapılar içinde saklar. Bu yapı belge, anahtar-değer, sütun veya grafik olabilir.
+
+##### 2. Veri Yapısı ve Şema
+
+* RDBMS: Verilerin yapısı önceden tanımlanır. Her tablo belirli bir şemaya uymalıdır (örneğin “kullanıcı” tablosunda ad, soyad, e-posta sütunları varsa, her kayıt bu sütunlara sahip olmalıdır).
+
+* NoSQL: Şema katı değildir. Aynı koleksiyonda (örneğin MongoDB’de “collection”) bulunan iki belge birbirinden farklı alanlara sahip olabilir.
+
+##### 3. Esneklik
+
+* RDBMS: Veri yapısı sabittir, değişiklik yapmak genellikle tabloyu yeniden tanımlamayı gerektirir.
+
+* NoSQL: Yeni alanlar, farklı veri tipleri veya ek bilgiler kolayca eklenebilir. Bu durum özellikle sürekli değişen veya büyüyen projelerde avantaj sağlar.
+
+##### 4. Ölçeklenebilirlik
+
+* RDBMS: Genellikle dikey ölçeklenir. Yani daha fazla kapasite gerektiğinde, mevcut sunucuya daha güçlü donanım eklenir.
+
+* NoSQL: Yatay ölçeklenir. Veriler farklı sunuculara dağıtılarak sistem genişletilir. Bu, büyük ölçekli uygulamalarda (örneğin sosyal medya, e-ticaret siteleri) tercih edilir.
+
+##### 5. Tutarlılık ve Hız
+
+* RDBMS: Verilerin her zaman tutarlı olmasını sağlar. “ACID” ilkeleri (Atomicity, Consistency, Isolation, Durability) geçerlidir. Bu yüzden finans, muhasebe, banka sistemleri gibi alanlarda kullanılır.
+
+* NoSQL: Tutarlılık bazen “eventual consistency” (sonradan tutarlılık) olarak sağlanır. Yani sistem hızlı çalışır, ama veriler kısa bir süre tutarsız olabilir. Bu durum hızın önemli olduğu sistemlerde avantajdır.
+
+##### 6. Sorgulama Dili
+
+* RDBMS: Tüm işlemler SQL ile yapılır (SELECT, INSERT, UPDATE, DELETE).
+
+* NoSQL: Genellikle her veritabanının kendine özel sorgulama yapısı vardır. Örneğin MongoDB’de JSON benzeri sorgular kullanılır, Redis’te komut tabanlı sorgular bulunur.
+
+##### 7. Kullanım Alanları
+
+* RDBMS: Güçlü veri bütünlüğü, karmaşık ilişkiler ve güvenilirlik gerektiren sistemlerde tercih edilir.
+
+* NoSQL: Esneklik, hız ve yüksek ölçek gerektiren projelerde tercih edilir.
+
+</details>
+
+<details>
+
+<summary>ORM nedir? Entity Framework Core nedir?</summary>
+
+> ORM nedir?
+
+ORM (Object Relational Mapping) yani Nesne-İlişkisel Eşleme, nesne tabanlı programlama dillerinde kullanılan sınıflar (class) ile ilişkisel veritabanlarındaki tablolar arasında otomatik bir bağlantı (eşleme) kuran bir tekniktir.
+Bu teknik sayesinde, geliştiriciler SQL sorguları yazmadan, doğrudan programlama dili üzerinden nesnelerle veritabanı işlemleri (ekleme, silme, güncelleme, sorgulama vb.) yapabilirler.
+
+> Entity Framwork Core Nedir?
+
+Entity Framework Core (EF Core), Microsoft tarafından geliştirilmiş, .NET platformu için modern bir ORM (Object Relational Mapping) aracıdır. EF Core, geliştiricilerin SQL sorguları yazmadan, doğrudan C# sınıfları ve nesneleri üzerinden veritabanı işlemleri yapmalarını sağlar.
+EF Core, platform bağımsız çalışır; Windows, Linux ve macOS üzerinde kullanılabilir. Ayrıca SQL Server, PostgreSQL, MySQL, SQLite, Oracle gibi birçok veritabanını destekler. LINQ (Language Integrated Query) sayesinde sorgular C# sözdizimiyle yazılabilir. Ayrıca migration (göç) sistemi ile veritabanı şeması kod üzerinden yönetilebilir. Önceki sürüm olan Entity Framework’e göre daha hafif, hızlı ve performanslıdır.
+
+</details>
+
+<details>
+
+<summary>DbContext nedir, nasıl kullanılır?</summary>
+
+> DbContext Nedir:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+</details>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<details>
+
+<summary>LINQ nedir? En çok kullanılan LINQ ifadeleri</summary>
+
+> LINQ Nedir?
+
+
+LINQ, .NET platformunda veri üzerinde sorgulama ve manipülasyon işlemlerini kolaylaştıran bir teknolojidir. Geleneksel olarak veritabanı sorguları SQL ile yapılır, ancak LINQ ile aynı mantığı C# veya VB.NET kodu içinde kullanabilirsiniz. Yani SQL benzeri sorguları doğrudan programlama dili içinde yazabilirsiniz ve sadece veritabanları değil, listeler, diziler, koleksiyonlar, XML dosyaları ve hatta web servislerinden gelen veriler üzerinde de çalışabilir.
+
+> En Çok Kullanılan LINQ İfadeleri
+
+| Metot / İfade                           | Açıklama                                                       | Örnek                                                         |
+| --------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------- |
+| **Where**                               | Filtreleme yapar, belirli bir koşulu sağlayan elemanları seçer | `list.Where(x => x.Age > 18)`                                 |
+| **Select**                              | Belirli alanları veya değerleri seçer (projeksiyon)            | `list.Select(x => x.Name)`                                    |
+| **OrderBy / OrderByDescending**         | Verileri artan veya azalan sırada sıralar                      | `list.OrderBy(x => x.Age)`                                    |
+| **ThenBy / ThenByDescending**           | İkincil sıralama için kullanılır                               | `list.OrderBy(x => x.Age).ThenBy(x => x.Name)`                |
+| **GroupBy**                             | Elemanları belirli bir kritere göre gruplar                    | `list.GroupBy(x => x.Department)`                             |
+| **Join**                                | İki koleksiyonu belirli bir alan üzerinden birleştirir         | `list1.Join(list2, a => a.Id, b => b.Id, (a,b) => new {...})` |
+| **Distinct**                            | Tekrarlayan elemanları kaldırır                                | `list.Select(x => x.Name).Distinct()`                         |
+| **Any**                                 | Koşulu sağlayan en az bir eleman var mı?                       | `list.Any(x => x.Age > 30)`                                   |
+| **All**                                 | Tüm elemanlar koşulu sağlıyor mu?                              | `list.All(x => x.Age > 18)`                                   |
+| **Count / Sum / Min / Max / Average**   | Sayısal veya toplu işlemler yapar                              | `list.Count()`, `list.Sum(x => x.Salary)`                     |
+| **First / FirstOrDefault**              | Koşulu sağlayan ilk elemanı getirir                            | `list.FirstOrDefault(x => x.Age > 18)`                        |
+| **Last / LastOrDefault**                | Koşulu sağlayan son elemanı getirir                            | `list.LastOrDefault(x => x.Age > 18)`                         |
+| **Take / Skip**                         | Belirli sayıda eleman alır veya atlar                          | `list.Skip(10).Take(5)`                                       |
+| **Concat / Union / Intersect / Except** | Koleksiyonları birleştirme ve karşılaştırma                    | `list1.Concat(list2)`                                         |
+
+
+> LINQ örnekleri ve karşılık gelen SQL açıklamaları
+
+### LINQ Kodu
+```yml
+var result = employees
+    .Where(e => e.Salary > 50000)        // Maaşı 50000’den fazla olanları seç
+    .OrderByDescending(e => e.Salary)    // Maaşa göre azalan sırada sırala
+    .GroupBy(e => e.Department)          // Departmana göre grupla
+    .Select(g => new 
+    { 
+        Department = g.Key, 
+        EmployeeCount = g.Count(), 
+        MaxSalary = g.Max(e => e.Salary) 
+    });
+
+```
+### SQL Karşılığı 
+``` yml
+SELECT Department, COUNT(*) AS EmployeeCount, MAX(Salary) AS MaxSalary
+FROM Employees
+WHERE Salary > 5000
+GROUP BY Department
+ORDER BY MaxSalary DESC;
+
+```
+
+Açıklaması:
+
+```Where``` → SQL’deki ```WHERE``` koşuluna karşılık gelir.
+
+```OrderByDescending``` → SQL’de ```ORDER BY ... DESC```.
+
+```GroupBy``` → SQL’de ```GROUP BY```.
+
+```Select``` → SQL’de ```SELECT``` ile aynı mantık.
+
+LINQ ile hem filtreleme hem sıralama hem de gruplama tek bir zincirleme ifadede yapılabiliyor.
+
+</details>
+
+
+<details>
+
+<summary>Code-First ve Database-First yaklaşımı nedir?</summary>
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+</details>
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+                                                                                                                                                                                                                                                                                                                                                                      
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
