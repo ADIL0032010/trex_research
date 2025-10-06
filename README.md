@@ -1163,44 +1163,20 @@ EF Core, platform bağımsız çalışır; Windows, Linux ve macOS üzerinde kul
 
 > DbContext Nedir:
 
+DbContext, Entity Framework’te veritabanı bağlantısını yöneten, veri sorgulama, ekleme, güncelleme ve silme (CRUD) işlemlerini gerçekleştiren bir sınıftır.
+Yani senin yazdığın C# kodu ile veritabanı arasında iletişimi sağlar.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+> Nasıl Kullanılır:
  
+Bir DbContext sınıfı oluşturulur.Bu sınıfta veritabanı bağlantısı tanımlanır ve hangi tablolarla çalışılacağı belirlenir.Projede DbContext üzerinden veritabanına erişilir.
+
+* DbContext sınıfı tanımlanır.
+
+* Veritabanı bağlantısı eklenir.
+
+* SaveChanges() metodu ile yapılan işlemler veritabanına kaydedilir.
+
 </details>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <details>
 
@@ -1234,7 +1210,7 @@ LINQ, .NET platformunda veri üzerinde sorgulama ve manipülasyon işlemlerini k
 > LINQ örnekleri ve karşılık gelen SQL açıklamaları
 
 ### LINQ Kodu
-```yml
+```sql
 var result = employees
     .Where(e => e.Salary > 50000)        // Maaşı 50000’den fazla olanları seç
     .OrderByDescending(e => e.Salary)    // Maaşa göre azalan sırada sırala
@@ -1248,7 +1224,7 @@ var result = employees
 
 ```
 ### SQL Karşılığı 
-``` yml
+```sql
 SELECT Department, COUNT(*) AS EmployeeCount, MAX(Salary) AS MaxSalary
 FROM Employees
 WHERE Salary > 5000
@@ -1276,6 +1252,132 @@ LINQ ile hem filtreleme hem sıralama hem de gruplama tek bir zincirleme ifadede
 
 <summary>Code-First ve Database-First yaklaşımı nedir?</summary>
 
+> Code-First Yaklaşımı Nedir?
+ 
+Code-First yaklaşımı, Entity Framework kullanırken önce C# kodları (sınıflar / modeller) yazılır, sonra bu kodlardan veritabanı oluşturulur yaklaşımıdır.Veritabanı tasarımını doğrudan kod üzerinden yaparsın; tablolar, kolonlar ve ilişkiler C# sınıflarıyla tanımlanır ve Entity Framework bu yapıyı kullanarak veritabanını otomatik oluşturur.
+
+* Temel Özellikleri:
+
+    * Başlangıç noktası koddur
+
+    * Veritabanı değil, model sınıfları önceliklidir.
+
+    * DbContext kullanılır
+
+    * DbContext sınıfı, tabloların ve veritabanı bağlantısının yönetilmesini sağlar.
+
+    * Migration ile veritabanı yönetimi
+
+    * Kod değiştiğinde Add-Migration ve Update-Database komutlarıyla veritabanı güncellenir.
+
+
+> Database-First Yaklaşımı Nedir?
+
+Database-First yaklaşımı, Entity Framework kullanırken önce veritabanı tasarlanır, ardından bu veritabanına uygun C# sınıfları ve DbContext otomatik olarak oluşturulur yaklaşımıdır.Yani sen zaten var olan bir veritabanına sahipsin, Entity Framework bu veritabanını okuyarak senin yerinde model ve DbContext sınıflarını üretir.
+
+ * Temel Özellikleri:
+
+    * Başlangıç noktası veritabanıdır
+
+    * Kod değil, mevcut tablolar ve ilişkiler önceliklidir.
+
+    * Visual Studio veya EF komutları ile model oluşturulur
+
+    * EF Designer veya Scaffold-DbContext komutu kullanılarak entity sınıfları ve DbContext üretilir.
+
+    * Kod ve veritabanı senkronize olur
+
+    * Veritabanında değişiklik olursa, kod yeniden oluşturularak güncelleni
+
+ 
+> Code-First vs DB-First karşılaştırması (Tablo):
+
+| Özellik                   | Code-First                                                                  | Database-First                                                        |
+| ------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| **Başlangıç noktası**     | Kod (sınıflar / model)                                                      | Mevcut veritabanı                                                     |
+| **Veritabanı oluşturma**  | Koddan migration ile oluşturulur                                            | Var olan veritabanı kullanılır                                        |
+| **Kod yazma zorunluluğu** | Model sınıflarını yazmalısın                                                | Kod otomatik olarak üretilir                                          |
+| **Değişiklik yönetimi**   | Migration ile kolayca yapılır                                               | Veritabanı değişirse kodu yeniden oluşturmak gerekir                  |
+| **Esneklik**              | Yüksek, model tamamen kontrol sende                                         | Sınırlı, veritabanı yapısına bağlı                                    |
+| **Kullanım amacı**        | Yeni projeler, domain odaklı tasarım                                        | Mevcut veya hazır veritabanları                                       |
+| **Avantaj**               | Kod ve model tam kontrol altında, migration ile versiyon yönetimi kolay     | Hızlı başlangıç, model otomatik üretilir                              |
+| **Dezavantaj**            | Mevcut veritabanıyla uyumsuzluk zorluğu, büyük veritabanlarında yönetim zor | Kod esnekliği sınırlı, veritabanı değişirse yeniden modelleme gerekir |
+
+</details>
+
+<details>
+
+<summary>Temel SQL sorguları: SELECT, INSERT, UPDATE, DELETE</summary>
+
+#### SELECT:
+
+* Veritabanındaki verileri okumak ve görüntülemek için kullanılır.
+
+```sql
+SELECT sütun1, sütun2, ...
+FROM tablo_adı
+WHERE koşul;
+
+```
+
+#### INSERT:
+
+* Veritabanına yeni kayıt eklemek için kullanılır.
+
+```sql
+INSERT INTO tablo_adı (sütun1, sütun2, ...)
+VALUES (değer1, değer2, ...);
+```
+
+#### UPDATE:
+
+* Var olan verileri değiştirmek için kullanılır.
+  
+```sql
+UPDATE tablo_adı
+SET sütun1 = değer1, sütun2 = değer2, ...
+WHERE koşul;
+```
+#### DELETE:
+
+* Veritabanından kayıt silmek için kullanılır.
+  
+```sql
+DELETE FROM tablo_adı
+WHERE koşul;
+```
+> 4 Temel SQL Sorgusuna Örnek 
+#### SELECT:
+```sql
+SELECT * FROM Musteriler;
+```
+#### INSERT:
+```sql
+INSERT INTO Musteriler (MusteriID, Ad, Soyad, Sehir) VALUES (4, 'Ali', 'Çelik', 'Bursa');
+```
+
+#### UPDATE:
+```sql
+UPDATE Musteriler SET Sehir = 'İzmir' WHERE Ad = 'Ali' AND Soyad = 'Çelik';
+```
+#### DELETE:
+
+```sql
+DELETE FROM Musteriler WHERE Ad = 'Fatma' AND Soyad = 'Kaya';
+
+```
+</details>
+
+
+##  6. Güvenlik ve Performans
+
+<details>
+<summary></summary>
+
+
+
+
+
 
 
 
@@ -1293,27 +1395,7 @@ LINQ ile hem filtreleme hem sıralama hem de gruplama tek bir zincirleme ifadede
 
 
 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-                                                                                                                                                                                                                                                                                                                                                                      
+                                                                            
 
 
 
