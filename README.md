@@ -1604,6 +1604,257 @@ app.MapPost("/connect/token", async (HttpContext context) =>
 });
 
 ````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+> OpenID nedir?
+
+OpenID, kullanıcıların her web sitesi veya uygulama için ayrı kullanıcı adı ve şifre oluşturmak zorunda kalmadan, tek bir kimlik sağlayıcısı (örneğin Google, Facebook, Microsoft gibi) üzerinden kimliğini doğrulayarak giriş yapmasını sağlayan bir kimlik doğrulama (authentication) protokolüdür.Bu sistem sayesinde kullanıcı, giriş yapmak istediği uygulamaya doğrudan şifresini vermez; bunun yerine kimliğini OpenID sağlayıcısı üzerinden doğrular. Ardından sağlayıcı, uygulamaya “bu kişi doğrulandı” şeklinde güvenli bir kimlik bilgisi gönderir.
+
+> Örnek:
+ ```java
+builder.Services.AddAuthentication("Cookies")
+    .AddCookie()
+    .AddOpenIdConnect("oidc", options =>
+    {
+        options.Authority = "https://accounts.google.com";
+        options.ClientId = "YOUR_CLIENT_ID";
+        options.ClientSecret = "YOUR_CLIENT_SECRET";
+        options.SaveTokens = true;
+    });
+
+var app = builder.Build();
+app.UseAuthentication();
+
+app.MapGet("/login", async ctx =>
+{
+    await ctx.ChallengeAsync("oidc", new AuthenticationProperties { RedirectUri = "/" });
+});
+
+app.Run();
+```
+
+> Aralarındaki ilişki:
+
+| Kavram         | Tür                            | Temel Amaç                                                        | Kullanım Alanı                                | Örnek                                       | Diğerleriyle İlişkisi                                                                      |
+| -------------- | ------------------------------ | ----------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| **OAuth**      | Yetkilendirme protokolü (eski) | Başka bir uygulamaya kullanıcı adına sınırlı erişim izni sağlamak | Web API’ler, üçüncü taraf uygulamalar         | Twitter API’sine erişim                     | OAuth 2.0’ın temelini oluşturur                                                            |
+| **OAuth 2.0**  | Yetkilendirme protokolü        | Kullanıcı şifresi paylaşılmadan uygulamalara erişim izni vermek   | Web, mobil, masaüstü uygulamalar              | Google Drive erişimi, Facebook Graph API    | OpenID Connect’in temel yetkilendirme altyapısıdır                                         |
+| **OpenID**     | Kimlik doğrulama protokolü     | Kullanıcının kimliğini doğrulamak                                 | Web siteleri, SSO (Single Sign-On)            | “Google ile giriş yap”                      | OpenID Connect’in öncüsü, OAuth 2.0 ile birleşerek kimlik doğrulama sağlar                 |
+| **OpenIddict** | .NET kütüphanesi               | OAuth 2.0 ve OpenID Connect protokollerini uygulamak              | ASP.NET Core projeleri, kendi kimlik sunucusu | Token endpoint’leri oluşturma, login/logout | Teorik protokolleri pratikte uygular, OAuth 2.0 ve OpenID Connect’i .NET ortamında yönetir |
+
+</details>
+
+<details>
+
+<summary>Performans artımı için ne yapılabilir? (AsNoTracking, IAsyncEnumerable, caching, profiling, redis)</summary>
+
+1. AsNoTracking (Entity Framework)
+
+* Ne yapar: EF Core’da sorgulanan veriler için değişiklik takibi (Change Tracking) yapılmaz.
+
+* Avantajı: Bellek kullanımı azalır, sorgular daha hızlı çalışır.
+
+* Ne zaman kullanılır: Sadece okuma işlemleri yapıyorsan ve veriyi güncelleme planın yoksa.
+
+```java
+var products = await dbContext.Products.AsNoTracking().ToListAsync();
+```
+
+2. IAsyncEnumerable (C# 8+)
+
+Ne yapar: Büyük veri koleksiyonlarını streaming şeklinde asenkron olarak çeker.
+
+Avantajı: Tüm veriyi belleğe almadan veri işleme, düşük bellek kullanımı, uygulama yanıt süresinde azalma.
+
+```java
+await foreach(var product in dbContext.Products.AsAsyncEnumerable())
+{
+    Console.WriteLine(product.Name);
+}
+
+```
+
+3. Caching (Önbellekleme)
+
+* Ne yapar: Sorgu veya hesaplama sonuçlarını geçici olarak saklar, tekrar kullanılmasını sağlar.
+
+* Avantajı: Veritabanı veya işlem yükünü azaltır, yanıt süresi kısalır.
+
+* Örnek araçlar: MemoryCache, Redis, NCache.
+
+```java
+
+var cachedProducts = memoryCache.GetOrCreate("products", entry =>
+{
+    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+    return dbContext.Products.ToList();
+});
+
+```
+
+4. Profiling (Performans Ölçümü)
+
+* Ne yapar: Uygulamanın hangi bölümlerinin yavaş çalıştığını tespit eder.
+
+* Avantajı: Dar boğazları belirleyip optimize etmeyi sağlar.
+
+* Araçlar: MiniProfiler, EF Core logging, Application Insights, dotTrace.
+
+
+5. Redis
+
+* Ne yapar: Distributed cache sağlar, veriler RAM’de saklanır.
+
+* Avantajı: Veritabanı sorgularını azaltır, yüksek hızlı okuma/yazma imkanı sunar.
+
+* Kullanım alanı: Oturum yönetimi, sık erişilen veri, rate limiting.
+
+
+```java
+await redis.StringSetAsync("products", JsonConvert.SerializeObject(products), TimeSpan.FromMinutes(10));
+
+```
+
+
+> Performans için önerilen en az 3 teknik ve açıklamaları
+
+| Teknik                                   | Ne Yapar                                                                  | Avantajı                                                 | Kullanım Alanı / Örnek                                                         |
+| ---------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| **AsNoTracking**                         | EF Core’da sorgulanan veriler için değişiklik takibini devre dışı bırakır | Bellek kullanımı azalır, sorgular daha hızlı çalışır     | Sadece okuma işlemleri, örn: `dbContext.Products.AsNoTracking().ToListAsync()` |
+| **Caching (Önbellekleme)**               | Sık kullanılan veriyi geçici olarak saklar ve tekrar kullanır             | Veritabanı yükü azalır, yanıt süresi kısalır             | MemoryCache, Redis, NCache, örn: kullanıcı listesi, ürün katalogları           |
+| **IAsyncEnumerable / AsAsyncEnumerable** | Büyük veri koleksiyonlarını stream şeklinde ve asenkron çeker             | Bellek kullanımı azalır, uygulama daha hızlı yanıt verir | Büyük veri listeleri, log işleme, raporlama                                    |
+
+</details>
+
+<details>
+
+
+<summary>OWASP Top 10</summary>
+
+> Web uygulamalarında en yaygın güvenlik açıkları:
+
+| Güvenlik Açığı                                        | Açıklama                                                                                                                            |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Injection**                                         | SQL, NoSQL, OS veya LDAP enjeksiyonları. Kullanıcı girdisinin doğru doğrulanmaması sonucu oluşur.                                   |
+| **Broken Authentication (Kimlik Doğrulama Hataları)** | Zayıf parola politikaları, oturum yönetimi hataları veya kimlik doğrulama eksiklikleri nedeniyle hesapların ele geçirilmesi.        |
+| **Sensitive Data Exposure**                           | Hassas verilerin (şifre, kredi kartı, kişisel bilgiler) yetersiz şifreleme veya hatalı veri koruması ile ifşa edilmesi.             |
+| **Broken Access Control**                             | Kullanıcıların yetkisi olmayan kaynaklara erişebilmesi, yetki kontrollerinin eksik veya hatalı olması.                              |
+| **Security Misconfiguration**                         | Yanlış veya eksik yapılandırmalar, gereksiz açık servisler, varsayılan şifrelerin kullanımı.                                        |
+| **Cross-Site Scripting (XSS)**                        | Kullanıcının girdiği zararlı kodların tarayıcıda çalıştırılması; genellikle HTML/JS içeriklerinde filtreleme yapılmadığında oluşur. |
+| **Insecure Deserialization**                          | Güvensiz nesne serileştirme ve geri serileştirme işlemleri, kötü amaçlı kod çalıştırılmasına sebep olabilir.                        |
+| **Using Components with Known Vulnerabilities**       | Güncel olmayan kütüphaneler veya frameworklerin kullanılması, bilinen açıklardan dolayı risk oluşturur.                             |
+| **Insufficient Logging & Monitoring**                 | Güvenlik olaylarının yeterince loglanmaması veya izlenmemesi, saldırıların farkedilmesini zorlaştırır.                              |
+| **Server-Side Request Forgery (SSRF)**                | Sunucunun, saldırgan kontrolündeki URL’lere istek göndermesine izin verilmesi.                                                      |
+
+
+
+> SQL Injection, XSS, CSRF, Broken Auth gibi başlıkların kısa tanımı:
+
+| Açık                                            | Kısa Tanım                                                                                                                                |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------                                          |
+| **SQL Injection**                               | Kullanıcı girdisinin doğrulanmamasıyla, kötü amaçlı SQL kodlarının veritabanında çalıştırılması.                                          |
+| **XSS (Cross-Site Scripting)**                  | Kullanıcının girdiği zararlı kodların (JavaScript/HTML) tarayıcıda çalıştırılması.                                                        |
+| **CSRF (Cross-Site Request Forgery)**           | Kullanıcının bilgisi dışında, oturum açmış olduğu uygulamada istenmeyen işlemlerin yapılması.                                             |
+| **Broken Authentication**                       | Zayıf kimlik doğrulama veya oturum yönetimi hataları nedeniyle hesapların ele geçirilmesi.                                                |
+| **Broken Access Control**                       | Kullanıcıların yetkisi olmayan sayfalara veya işlemlere erişebilmesi.                                                                     |
+
+> ASP.NET Core ile alınabilecek önlemler (örnek: model validation, input sanitization)
+
+| Önlem                              | Açıklama                                                                                      | ASP.NET Core Örneği                                                                                                                        |
+| ---------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Model Validation**               | Kullanıcıdan gelen verilerin doğruluğunu kontrol eder, hatalı veya zararlı girişleri engeller | `[Required]`, `[StringLength]`, `[Range]` gibi DataAnnotations kullanımı                                                                   |
+| **Input Sanitization / Encoding**  | Kullanıcı girdilerini temizler veya encode ederek XSS gibi saldırıları engeller               | `HtmlEncoder.Default.Encode(userInput)` veya Razor sayfalarda otomatik HTML encode                                                         |
+| **Anti-Forgery / CSRF Koruması**   | CSRF saldırılarını önler                                                                      | `[ValidateAntiForgeryToken]` attribute ile form doğrulama; Razor sayfalarda `@Html.AntiForgeryToken()`                                     |
+| **Authentication & Authorization** | Kullanıcı kimliğini doğrular ve yetkilerini kontrol eder                                      | `AddAuthentication()`, `AddAuthorization()`, `[Authorize]` attribute                                                                       |
+| **HTTPS Enforcement**              | Verilerin şifreli iletilmesini sağlar                                                         | `app.UseHttpsRedirection();` ve HSTS (`app.UseHsts();`) kullanımı                                                                          |
+| **CORS Policy**                    | Uygulamaya hangi domainlerden istek yapılabileceğini sınırlar                                 | `services.AddCors(options => { options.AddPolicy("MyPolicy", builder => builder.WithOrigins("https://example.com").AllowAnyHeader()); });` |
+| **Rate Limiting / Throttling**     | Brute-force veya DoS saldırılarını azaltır                                                    | ASP.NET Core 7+ ile `AddRateLimiter()` kullanımı veya üçüncü parti middleware                                                              |
+| **Logging & Monitoring**           | Şüpheli aktiviteleri takip etmeyi sağlar                                                      | `ILogger` ile önemli olayların kaydedilmesi, Application Insights entegrasyonu                                                             |
+| **Secure Headers**                 | Clickjacking, XSS ve MIME tipi saldırılarını azaltır                                          | `app.UseHsts();`, `app.UseXContentTypeOptions();`, `app.UseXfo();`                                                                         |
+| **Data Protection / Encryption**   | Hassas verileri güvenli şekilde saklar                                                        | `IDataProtector` veya `ProtectedData.Protect()` kullanımı                                                                                  |
+</details>
+
+ ## 7. Logging ve Hata Yönetimi
+
+ <details>
+<summary>Neden loglama yapılır? Log seviyesi nedir?</summary>
+
+> Neden Loglama Yapılır?
+
+Loglama, uygulama ve sistemlerde gerçekleşen olayların kaydedilmesi işlemidir. Neden yapıldığına dair temel sebepler şunlardır:
+
+
+1. Hata ve Sorun Tespiti
+
+     * Uygulamada oluşan hataların veya beklenmedik davranışların kaynağını bulmak için yapılır.
+
+     * Örnek: Bir API isteğinin neden başarısız olduğunu loglardan anlayabilirsiniz.
+
+2. Güvenlik İzleme
+
+     * Şüpheli aktiviteleri veya saldırı girişimlerini tespit etmek için loglar kullanılır.
+
+     * Örnek: Brute-force giriş denemeleri, yetkisiz erişim girişimleri.
+
+3. Performans Analizi
+
+     * Uygulamanın hangi bölümlerinin yavaş çalıştığını görmek için loglama yapılır.
+
+     * Örnek: Database sorgularının yanıt süresi, API endpoint süreleri.
+
+4. Denetim ve Uyumluluk
+
+     * Bazı sektörlerde loglar, yasal ve düzenleyici gereklilikler için tutulmalıdır.
+
+     * Örnek: Finans veya sağlık sektöründe kullanıcı işlemleri kayıt altına alınır.
+
+5. Olay ve Kullanıcı Davranışı Analizi
+
+     * Kullanıcıların uygulamayı nasıl kullandığını anlamak ve iyileştirmeler yapmak için loglar kullanılabilir.
+
+
+
+> Log Seviyesi Nedir?
+
+Log seviyesi, bir log mesajının önem veya kritiklik derecesini belirten kategoridir. Log seviyeleri, uygulamanın hangi tür olayları kaydedeceğini ve hangi durumların dikkate alınacağını yönetmek için kullanılır.
+
+
+| Seviye                 | Açıklama                                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **Trace**              | En ayrıntılı seviye. Hata ayıklama (debug) sırasında sistemin adım adım davranışını izlemek için kullanılır.        |
+| **Debug**              | Uygulamanın normal çalışmasını anlamak ve hataları tespit etmek için detaylı bilgiler.                              |
+| **Information (Info)** | Normal çalışma sırasında önemli olayları kaydetmek için kullanılır. Örn: kullanıcı girişleri, işlem tamamlanmaları. |
+| **Warning**            | Potansiyel sorunları veya beklenmeyen durumları gösterir, ancak uygulama çalışmaya devam eder.                      |
+| **Error**              | Hata oluştuğunu bildirir. Uygulama bazı işlevleri gerçekleştiremez.                                                 |
+| **Critical / Fatal**   | Çok ciddi hatalar. Uygulamanın çalışması tehlikede veya durdurulmuş durumda.                                        |
+
+</details>
+
+
+<details>
+
+<summary>ASP.NET Core'da logging altyapısı</summary>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1611,6 +1862,72 @@ app.MapPost("/connect/token", async (HttpContext context) =>
 
  
 </details>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
                                                                             
 
 
