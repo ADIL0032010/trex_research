@@ -1372,7 +1372,155 @@ DELETE FROM Musteriler WHERE Ad = 'Fatma' AND Soyad = 'Kaya';
 ##  6. Güvenlik ve Performans
 
 <details>
-<summary></summary>
+<summary>Authentication vs Authorization nedir?</summary>
+
+> Aurhentication Nedir?
+
+Authentication (kimlik doğrulama), bir kullanıcının gerçekten iddia ettiği kişi olup olmadığını kanıtlama sürecidir.Bir sistem, kullanıcıya “sen kimsin?” diye sorar. Kullanıcı da bunu genellikle kullanıcı adı ve şifre ile kanıtlar. Eğer bilgiler doğruysa sistem o kişiyi tanır ve oturum açmasına izin verir.
+
+> Örneğin:
+
+Bir web sitesine giriş yaparken:
+
+Kullanıcı adı → seni tanımlayan bilgi
+
+Şifre → sadece senin bildiğin gizli bilgi
+
+Sistem, şifrenin doğru olduğunu kontrol eder. Eğer doğruysa senin gerçekten o kullanıcı olduğuna inanır. Bu işlem authentication’dır.
+
+> Authorization Nedir?
+
+Authorization (yetkilendirme), bir kullanıcının hangi kaynaklara veya işlemlere erişim hakkı olduğunu belirleme sürecidir.Yani kullanıcı sisteme giriş yaptıktan ve kimliği doğrulandıktan sonra (authentication), sistem “Bu kişi ne yapabilir?” sorusunu cevaplar.
+
+
+> Örneğin:
+
+Bir web sitesine giriş yaptın (Authentication)
+
+Yönetici paneline erişmek istiyorsun
+
+Eğer kullanıcı adminse → erişim verilir
+
+Eğer kullanıcı normal kullanıcıysa → erişim reddedilir
+
+
+Authentication vs Authorization (Tablo)
+
+ 
+| Özellik | Authentication                   | Authorization                          |
+| ------- | -------------------------------- | -------------------------------------- |
+| Amaç    | Kim olduğunu doğrulamak          | Ne yapabileceğini kontrol etmek        |
+| Soru    | "Sen kimsin?"                    | "Bu kişi ne yapabilir?"                |
+| Zaman   | Önce yapılır                     | Authentication’dan sonra yapılır       |
+| Örnek   | Kullanıcı adı ve şifre ile giriş | Yönetici paneline erişim izni kontrolü |
+
+</details>
+
+<details>
+
+<summary>JWT (JSON Web Token) nedir, nasıl çalışır?</summary>
+
+> JWT (JSON Web Token) Nedir:
+
+JWT (JSON Web Token), web uygulamalarında kullanıcı doğrulama ve yetkilendirme için kullanılan güvenli bir token formatıdır. Temel amacı, kullanıcı kimliğini ve yetkilerini taşınabilir ve güvenli bir şekilde istemci ile sunucu arasında paylaşmaktır.
+
+> JWT (JSON Web Token) Nasıl Çalışır:
+
+* Kullanıcı sisteme giriş yapar (kullanıcı adı ve şifre).
+
+* Sunucu kimliği doğrular (authentication).
+
+* Sunucu bir JWT oluşturur:
+
+     * Header + Payload → base64 encode → Signature ile imzalanır.
+
+* JWT kullanıcıya gönderilir (genellikle HTTP yanıtında veya cookie ile).
+
+* Kullanıcı, sonraki istekte JWT’yi sunucuya gönderir (Authorization header veya cookie).
+
+* Sunucu JWT’yi doğrular:
+
+     * İmza doğru mu?
+
+     * Token süresi dolmuş mu?
+
+* Token geçerliyse, sunucu kullanıcının yetkilerini kontrol eder (authorization) ve isteği işler.
+
+
+> JWT Yapısının Temel Bileşenleri:
+
+1. Header (Başlık)
+
+* Token tipi ve imzalama algoritmasını belirtir.
+
+* Genellikle JSON formatındadır ve Base64 ile encode edilir.
+
+Örnek:
+
+```json
+  "alg": "HS256",
+  "typ": "JWT"
+}
+
+```
+
+2. Payload (Yük / Body)
+
+* Token içinde taşınacak bilgileri içerir.
+
+* Kullanıcı bilgileri ve token süresi gibi bilgiler burada bulunur.
+
+* JSON formatında yazılır ve Base64 ile encode edilir.
+
+Örnek:
+```json
+{
+  "sub": "1234567890",
+  "name": "Ali",
+  "role": "admin",
+  "exp": 1700000000
+}
+```
+
+3. Signature (İmza)
+
+
+* Header ve Payload Base64 ile encode edildikten sonra gizli anahtar ile imzalanır.
+
+* Bu sayede tokenın değiştirilip değiştirilmediği doğrulanabilir.
+
+```scss
+
+HMACSHA256(
+  base64UrlEncode(header) + "." + base64UrlEncode(payload),
+  secret
+)
+
+```
+ </details>
+
+<details>
+
+<summary>OAuth, OAuth2.0, OpenIddict, OpenID nedir? Aralarındaki ilişki </summary>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1391,10 +1539,6 @@ DELETE FROM Musteriler WHERE Ad = 'Fatma' AND Soyad = 'Kaya';
 
  
 </details>
-
-
-
-
                                                                             
 
 
