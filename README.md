@@ -1489,7 +1489,7 @@ JWT (JSON Web Token), web uygulamalarında kullanıcı doğrulama ve yetkilendir
 
 * Bu sayede tokenın değiştirilip değiştirilmediği doğrulanabilir.
 
-```scss
+```java
 
 HMACSHA256(
   base64UrlEncode(header) + "." + base64UrlEncode(payload),
@@ -1503,35 +1503,107 @@ HMACSHA256(
 
 <summary>OAuth, OAuth2.0, OpenIddict, OpenID nedir? Aralarındaki ilişki </summary>
 
+> OAuth Nedir?
+
+OAuth, bir kullanıcının şifrelerini paylaşmadan, üçüncü taraf uygulamalara kendi hesap bilgilerine veya verilerine sınırlı ve güvenli erişim izni vermesini sağlayan bir yetkilendirme protokolüdür. Bu sayede kullanıcı, uygulamaya sadece gerekli izinleri verir ve gizli bilgileri (örneğin şifre) üçüncü tarafla paylaşmak zorunda kalmaz. OAuth özellikle web ve mobil uygulamalarda, API erişimi ve tek oturum açma (SSO) senaryolarında yaygın olarak kullanılır.
+
+
+> Örnek:
+
+```java
+from requests_oauthlib import OAuth1Session
+
+# OAuth 1.0 bilgileri
+client_key = 'YOUR_CONSUMER_KEY'
+client_secret = 'YOUR_CONSUMER_SECRET'
+resource_owner_key = 'YOUR_ACCESS_TOKEN'
+resource_owner_secret = 'YOUR_ACCESS_TOKEN_SECRET'
+
+# OAuth 1.0 oturumu oluştur
+oauth = OAuth1Session(client_key,
+                      client_secret=client_secret,
+                      resource_owner_key=resource_owner_key,
+                      resource_owner_secret=resource_owner_secret)
+
+# API isteği gönder (örnek: Twitter kullanıcı bilgisi)
+url = 'https://api.twitter.com/1.1/account/verify_credentials.json'
+response = oauth.get(url)
+
+print('Kullanıcı Bilgisi:', response.json())
+
+```
+
+> OAuth2.0 Nedir?
+
+OAuth 2.0, kullanıcıların kendi şifrelerini üçüncü taraf uygulamalarla paylaşmadan, bu uygulamalara hesap verilerine sınırlı ve güvenli erişim izni vermesini sağlayan modern bir yetkilendirme protokolüdür. Bu protokol, özellikle web, mobil ve API tabanlı uygulamalarda yaygın olarak kullanılır ve güvenliği artırırken kullanıcı deneyimini iyileştirir. OAuth 2.0, erişim izinlerini token adı verilen geçici anahtarlarla yönetir; böylece uygulamalar sadece kullanıcı tarafından izin verilen verilere erişebilir ve kullanıcının şifresi hiçbir zaman paylaşılmaz. Bu yapı, hem kullanıcı gizliliğini korur hem de geliştiricilerin uygulamaları daha güvenli ve esnek bir şekilde tasarlamasına olanak tanır.
 
 
 
+> Örnek?
 
+```python
+from requests_oauthlib import OAuth2Session
 
+# OAuth 2.0 bilgileri
+client_id = 'YOUR_CLIENT_ID'
+client_secret = 'YOUR_CLIENT_SECRET'
+authorization_base_url = 'https://accounts.google.com/o/oauth2/auth'
+token_url = 'https://accounts.google.com/o/oauth2/token'
+redirect_uri = 'https://localhost/callback'
 
+# OAuth2 oturumu oluştur
+google = OAuth2Session(client_id, redirect_uri=redirect_uri, scope=['https://www.googleapis.com/auth/userinfo.profile'])
 
+# Kullanıcıyı Google giriş ve izin sayfasına yönlendir
+authorization_url, state = google.authorization_url(authorization_base_url)
+print('Lütfen tarayıcıda bu URL’yi açın ve izin verin:', authorization_url)
 
+# Kullanıcı izin verdikten sonra tarayıcıdaki yönlendirme URL’sini yapıştır
+redirect_response = input('Tarayıcıdaki yönlendirme URL’sini buraya yapıştırın: ')
 
+# Token al
+token = google.fetch_token(token_url, client_secret=client_secret, authorization_response=redirect_response)
+print('Erişim Tokeni:', token)
 
+# Google API’den kullanıcı bilgisi çek
+response = google.get('https://www.googleapis.com/oauth2/v1/userinfo')
+print('Kullanıcı Bilgisi:', response.json())
 
+```
 
+> OpenIddict Nedir?
 
+OpenIddict, .NET ekosisteminde kullanılan, OpenID Connect ve OAuth 2.0 protokollerini uygulayan açık kaynaklı bir kütüphanedir. Temel amacı, geliştiricilerin kendi uygulamaları için kimlik doğrulama (authentication) ve yetkilendirme (authorization) altyapısını kolayca kurmasını sağlamaktır.
 
+> Örnek:
 
+````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````java
+app.MapPost("/connect/token", async (HttpContext context) =>
+{
+    var form = await context.Request.ReadFormAsync();
+    var username = form["username"];
+    var password = form["password"];
 
+    if(username == "ali" && password == "1234")
+    {
+        var claims = new[]
+        {
+            new System.Security.Claims.Claim("sub", "1"),
+            new System.Security.Claims.Claim("name", "Ali")
+        };
 
+        var identity = new System.Security.Claims.ClaimsIdentity(
+            claims, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
+        var principal = new System.Security.Claims.ClaimsPrincipal(identity);
 
+        return Results.SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+    }
 
+    return Results.BadRequest(new { error = "invalid_grant" });
+});
 
-
-
-
-
-
-
-
-
+````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
 
 
 
