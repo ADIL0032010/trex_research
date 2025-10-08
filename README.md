@@ -1833,34 +1833,330 @@ Log seviyesi, bir log mesajının önem veya kritiklik derecesini belirten kateg
 
 <summary>ASP.NET Core'da logging altyapısı</summary>
 
+ASP.NET Core’da logging altyapısı, bir uygulamanın çalışması sırasında gerçekleşen olayları (bilgi, uyarı, hata, istisna vb.) kayıt altına almak için kullanılan merkezi ve genişletilebilir bir sistemdir.Bu sistem sayesinde geliştirici, uygulamada neler olduğunu takip edebilir, hata ayıklayabilir ve sistem davranışını analiz edebilir.
+
+
+```java
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Logging yapılandırması
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+var app = builder.Build();
+
+app.MapGet("/", (ILogger<Program> logger) =>
+{
+    logger.LogInformation("Ana sayfa isteği alındı.");
+    logger.LogWarning("Bu bir uyarı mesajıdır.");
+    logger.LogError("Bir hata oluştu.");
+    return "Merhaba Dünya!";
+});
+
+app.Run();
+
+```
+</details>
+
+<details>>
+
+<summary>Global exception handling nasıl yapılır?</summary>
+
+ASP.NET Core’da global exception handling (genel hata yakalama), uygulamada oluşan tüm beklenmeyen hataları merkezi bir noktada yakalayıp yönetmek için kullanılır.
+Bu yaklaşım sayesinde:
+
+* Her controller veya endpoint içinde ```try-catch``` yazmak gerekmez,
+
+* Hatalar loglanabilir,
+
+* Kullanıcıya anlamlı ve tutarlı bir hata yanıtı döndürülebilir.
 
 
 
+| Yöntem                             | Ne işe yarar                                                | Ne zaman kullanılır                      |
+| ---------------------------------- | ----------------------------------------------------------- | ---------------------------------------- |
+| **UseExceptionHandler middleware** | Framework’ün yerleşik hata yakalama mekanizmasıdır.         | Üretim ortamı (Production)               |
+| **UseDeveloperExceptionPage**      | Geliştirme sırasında detaylı hata sayfası gösterir.         | Development ortamı                       |
+| **Custom middleware**              | Hataları kendi istediğin şekilde yakalayıp loglayabilirsin. | Her ortamda özelleştirilebilir çözüm     |
+| **ExceptionFilter**                | MVC pipeline’ında çalışır.                                  | Sadece MVC veya Razor Pages projelerinde |
+
+</details>
+
+
+<details>
+
+<summary>UseExceptionHandler ve ILogger nasıl kullanılır?</summary>
+
+> UseExceptionHandler Nasıl kullanılır?
+
+UseExceptionHandler, ASP.NET Core’da uygulama genelinde oluşan hataları merkezi olarak yakalamak ve yönetmek için kullanılan bir middleware’dir. Normalde bir hata oluştuğunda kullanıcıya varsayılan bir hata sayfası gösterilir ve detaylar genellikle kullanıcıya gösterilmez. UseExceptionHandler sayesinde bu hataları tek bir noktada işleyebilir, özel bir hata sayfasına yönlendirebilir veya hataları loglayabilirsiniz.
+
+```java
+
+
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    if (!env.IsDevelopment())
+    {
+        // Merkezi hata yönetimi
+        app.UseExceptionHandler("/Home/Error"); // Hata oluşursa bu endpoint çağrılır
+        app.UseHsts();
+    }
+
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
+
+    app.UseRouting();
+    app.UseAuthorization();
+
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
+    });
+}
+
+
+```
+
+> ILogger Nasıl Kullanılır?
+
+ILogger, ASP.NET Core’da uygulamanın çalışma süresince hata, uyarı, bilgi ve debug mesajlarını kaydetmek için kullanılan yerleşik bir loglama arayüzüdür. Uygulama olaylarını izlemeyi, sorunları tespit etmeyi ve performans analizini kolaylaştırır. Dependency Injection ile sınıflara eklenebilir ve loglar farklı hedeflere (konsol, dosya, veritabanı, Application Insights vb.) yönlendirilebilir.
 
 
 
+```java
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+
+public class HomeController : Controller
+{
+    private readonly ILogger<HomeController> _logger;
+
+    public HomeController(ILogger<HomeController> logger)
+    {
+        _logger = logger;
+    }
+
+    public IActionResult Index()
+    {
+        _logger.LogInformation("Index sayfasına erişildi.");
+        try
+        {
+            int x = 0;
+            int y = 5 / x; // Hata örneği
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Index sayfasında bir hata oluştu.");
+        }
+
+        return View();
+    }
+}
+
+```
+</details>
+
+                           
+##  8. Yazılım Geliştirme Prensipleri
 
 
+<details>
+
+<summary>SOLID prensipleri: Her biri için kısa açıklama ve örnek</summary>
 
 
+| Prensip                                       | Açıklama                                                                                  | Örnek                                                                                                                                                             |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **S – Single Responsibility Principle (SRP)** | Bir sınıfın yalnızca **tek bir sorumluluğu** olmalı.                                      | `InvoicePrinter` sadece fatura yazdırır, fatura hesaplamaz.                                                                                                       |
+| **O – Open/Closed Principle (OCP)**           | Sınıflar **geliştirmeye açık, değişikliğe kapalı** olmalı.                                | Yeni ödeme yöntemleri eklemek için mevcut `PaymentProcessor` sınıfını değiştirmek yerine **interface** veya abstract class ile genişletme yapılır.                |
+| **L – Liskov Substitution Principle (LSP)**   | Türetilmiş sınıflar, **base class yerine geçebilmeli** ve davranışı bozmamalı.            | `Bird` sınıfı `Fly()` metoduna sahip. `Penguin` uçamadığı için `Fly()`’ı override etmez; base sınıfın sözleşmesini bozmamak için `IFlyable` interface kullanılır. |
+| **I – Interface Segregation Principle (ISP)** | Büyük interface’ler yerine, **amaca yönelik küçük interface’ler** olmalı.                 | `IMachine` yerine `IPrinter`, `IScanner` ayrı ayrı tanımlanır; bir sınıf gereksiz metodları implement etmek zorunda kalmaz.                                       |
+| **D – Dependency Inversion Principle (DIP)**  | Yüksek seviyeli modüller, düşük seviyeli modüllere değil, **abstraction’a bağlı olmalı**. | `OrderService` doğrudan `SqlRepository` kullanmaz, `IOrderRepository` interface’i üzerinden veri kaynağına erişir.                                                |
+
+</details>
+
+<details>
+
+<summary>Design Patterns: Singleton, Repository, Factory</summary>
 
 
+| Desen          | Açıklama                                                                                            | Örnek                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| -------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Singleton**  | Bir sınıfın **yalnızca tek bir örneğinin** oluşturulmasını sağlar ve bu örneğe global erişim sunar. | `csharp\npublic class Logger\n{\n    private static Logger _instance;\n    private static readonly object _lock = new();\n    private Logger() {}\n\n    public static Logger Instance\n    {\n        get\n        {\n            lock(_lock)\n            {\n                return _instance ??= new Logger();\n            }\n        }\n    }\n\n    public void Log(string message) => Console.WriteLine(message);\n}\n`                                                                |
+| **Repository** | Veritabanı işlemlerini soyutlar; veri erişim kodlarını merkezi bir yapı haline getirir.             | `csharp\npublic interface IProductRepository\n{\n    IEnumerable<Product> GetAll();\n}\n\npublic class ProductRepository : IProductRepository\n{\n    private readonly AppDbContext _context;\n    public ProductRepository(AppDbContext context) => _context = context;\n    public IEnumerable<Product> GetAll() => _context.Products.ToList();\n}\n`                                                                                                                                       |
+| **Factory**    | Nesne oluşturma işlemini soyutlar; nesne üretimini merkezileştirir.                                 | `csharp\npublic interface IShape { void Draw(); }\npublic class Circle : IShape { public void Draw() => Console.WriteLine(\"Circle\"); }\npublic class Square : IShape { public void Draw() => Console.WriteLine(\"Square\"); }\n\npublic class ShapeFactory\n{\n    public static IShape CreateShape(string type) => type switch\n    {\n        \"circle\" => new Circle(),\n        \"square\" => new Square(),\n        _ => throw new ArgumentException(\"Invalid shape\")\n    };\n}\n` |
+
+</details>
 
 
+<details>
+
+<summary>Clean Code nedir, neden önemlidir?</summary>
+
+> Clean Code Nedir?
+
+Clean Code (Temiz Kod), yazılımın kolay okunabilir, anlaşılır, bakım yapılabilir ve genişletilebilir şekilde yazılması yaklaşımıdır.Amaç, sadece çalışan kod değil, gelecekte başkaları (veya sen) tarafından rahatça anlaşılabilecek kod üretmektir.
+
+Clean Code’un temel ilkeleri şunlardır:
+
+* Kod basit olmalı, gereksiz karmaşıklıktan kaçınılmalı.
+
+* A* nlamlı isimler (değişken, metod, sınıf) kullanılmalı.
+
+* Yinelenen kodlar (duplicate code) olmamalı.
+
+* Kısa ve tek sorumluluğa sahip fonksiyonlar tercih edilmeli.
+
+* Yorum satırları kodun ne yaptığını değil, neden yaptığını açıklamalı.
+
+* Kod standartları (indentation, isimlendirme, format) tutarlı olmalı.
 
 
+> Clean Code Neden Önemlidir:
+
+* Okunabilirlik: Kodun mantığı kolay anlaşılır; başka geliştiriciler (ve sen) ne yaptığını hızlıca kavrar.
+
+* Bakım kolaylığı: Hatalar kolay bulunur ve düzeltilir. Kodda değişiklik yapmak daha az risklidir.
+
+* Yeniden kullanılabilirlik: Temiz, modüler yapı sayesinde kod parçaları farklı yerlerde tekrar kullanılabilir.
+
+* Takım çalışması: Kod standart bir yapıda olduğunda ekipteki herkes rahatça katkı sağlayabilir.
+
+* Hata oranını azaltır: Karmaşık veya düzensiz kod hataya daha açıktır; temiz kod bu riski düşürür.
 
 
+> Clean Code Uygulama Örnekleri:
+
+1.Anlamlı İsimlendirme:
+
+Kötü Kod:
+
+```java
+int c = GetUser(5);
+
+```
+
+Temiz Kod:
 
 
+```java
+int customerId = GetUser(5);
+
+```
 
 
+2.Kısa ve Anlamlı Fonksiyonlar:
+
+Kötü Kod:
+
+```java
+public void Process()
+{
+    // 100 satırlık karmaşık işlem
+}
+
+```
+
+Temiz Kod:
+
+```java
+public void Process()
+{
+    ValidateInput();
+    CalculateResult();
+    SaveData();
+}
+
+```
+</details>
 
 
+<details>
+
+<summary>Yazılım Mimari Desenleri(Layered, Clean Architecture, Microservices, Event-Driven, Hexagonal Architecture (Ports & Adapters)</summary>
+
+> Layered, Clean Architecture, Microservices, Event-Driven, Hexagonal Architecture (Ports & Adapters) Tablosu:
 
 
+| Mimari                                        | Kısa Tanım                                                                            | Temel Amaç                                                                                | Örnek Özellikler                                                                               |
+| --------------------------------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **Layered Architecture (Katmanlı Mimari)**    | Uygulama **katmanlara** ayrılır (Presentation, Business, Data Access vb.).            | Kodun düzenli, bakımı kolay ve katmanlar arası bağımlılığın azaltılması.                  | Katmanlar arası iletişim genelde sıralıdır: Controller → Service → Repository.                 |
+| **Clean Architecture**                        | Uygulamanın merkezinde **iş kuralları** yer alır, dış katmanlar bunlara bağımlıdır.   | Bağımlılıkları tersine çevirerek domain’in frameworklerden bağımsız çalışmasını sağlamak. | Bağımlılıklar hep **içe doğru** akar. Dış katman (UI, DB) domain’e bağımlıdır, tersi değil.    |
+| **Microservices Architecture**                | Uygulama **bağımsız, küçük servisler** şeklinde geliştirilir ve haberleşir.           | Her servisin bağımsız geliştirilip ölçeklenebilmesi.                                      | Her servis kendi veritabanına sahiptir; servisler genelde REST veya mesajlaşma ile haberleşir. |
+| **Event-Driven Architecture**                 | Servisler veya bileşenler **olaylar (event)** aracılığıyla iletişim kurar.            | Servisler arası **gevşek bağlı (loosely coupled)** iletişim sağlamak.                     | Bir servis olay yayınlar (“OrderCreated”), diğer servisler dinleyip tepki verir.               |
+| **Hexagonal Architecture (Ports & Adapters)** | Uygulama çekirdeği (domain) dış dünyaya **portlar ve adapterler** üzerinden bağlanır. | Uygulama mantığını dış sistemlerden (UI, DB, API) izole etmek.                            | Port = arayüz, Adapter = uygulamayı dış sistemlere bağlayan somut sınıf.                       |
 
- 
+
+> Hangi senaryoda hangi mimari tercih edilir?
+
+
+1.Layered Architecture 
+
+* Küçük veya orta ölçekli projelerde tercih edilir.
+
+* Basit CRUD işlemleri yapan uygulamalarda uygundur.
+
+* Tek ekip tarafından geliştirilen, karmaşık olmayan sistemlerde kullanılır.
+
+* Avantajı: Uygulaması kolay, anlaşılır yapı sağlar.
+
+* Dezavantajı: Katmanlar arasında sıkı bağımlılık oluşabilir, esneklik düşer
+
+
+2. Clean Architecture
+
+* Orta ve büyük ölçekli kurumsal uygulamalarda tercih edilir.
+
+* Domain (iş kuralları) merkezli, uzun ömürlü projeler için uygundur.
+
+* Test edilebilirlik ve bağımlılıklardan bağımsızlık öncelikliyse seçilir.
+
+* Avantajı: Kodun sürdürülebilirliği ve test edilebilirliği yüksektir.
+
+* Dezavantajı: Başlangıçta kurulumu daha karmaşık olabilir.
+
+3. Microservices Architecture
+
+* Büyük, ölçeklenebilir sistemlerde tercih edilir.
+
+* Farklı ekiplerin bağımsız servisler geliştirdiği projelerde kullanılır.
+
+* Her servisin kendi veritabanı ve yaşam döngüsü vardır.
+
+* Avantajı: Bağımsız geliştirme, dağıtım ve ölçekleme imkânı sunar.
+
+* Dezavantajı: Servisler arası iletişim karmaşık, yönetimi zordur.
+
+4. Event-Driven Architecture
+
+* Gerçek zamanlı, olay tabanlı sistemlerde tercih edilir.
+
+* Örnek: Bildirim sistemleri, IoT, finansal işlemler, sipariş akışları.
+
+* Servisler birbirine doğrudan bağlı değildir; “event”ler üzerinden iletişim kurar.
+
+* Avantajı: Gevşek bağlı, hızlı ve esnek bir yapı sağlar.
+
+* Dezavantajı: İzleme ve hata ayıklama zor olabilir.
+
+5. Hexagonal Architecture (Ports & Adapters)
+
+* Uygulama çekirdeğinin dış sistemlerden izole edilmesi istendiğinde kullanılır.
+
+* Framework, UI veya veritabanından bağımsız çalışması gereken sistemlerde uygundur.
+
+* “Port” arayüzleri, “Adapter” ise dış dünya bağlantılarını temsil eder.
+
+* Avantajı: Kod esnek, bağımsız ve kolay test edilebilir olur.
+
+* Dezavantajı: Tasarımı anlamak ve uygulamak diğerlerine göre daha zordur.
 </details>
 
 
@@ -1869,15 +2165,6 @@ Log seviyesi, bir log mesajının önem veya kritiklik derecesini belirten kateg
 
 
 
-
-
-
-
-
-
-
-
-  
  
 
 
@@ -1905,6 +2192,13 @@ Log seviyesi, bir log mesajının önem veya kritiklik derecesini belirten kateg
 
 
 
+
+
+
+
+
+
+
  
 
 
@@ -1917,177 +2211,18 @@ Log seviyesi, bir log mesajının önem veya kritiklik derecesini belirten kateg
 
 
 
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
-
-
-
-
-
-                                                                            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
